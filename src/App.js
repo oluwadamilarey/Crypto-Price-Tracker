@@ -1,5 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
+import Coin from './Coin.js'
 
 const Api = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=ngn&order=market_cap_desc&per_page=100&page=1&sparkline=false"
 
@@ -18,15 +20,43 @@ function App() {
       })
       .catch(error => console.log(error));
   }, []);
+ 
+  const filteredCoins = coins.filter(coin =>
+    coin.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleChange = e => {
     setSearch(e.target.value);
   };
-  
+
   return (
-    <div className="App">
-      <h1>Api</h1>
+    <div className='coin-app'>
+    <div className='coin-search'>
+      <h1 className='coin-text'>Search a currency</h1>
+      <form>
+        <input
+          className='coin-input'
+          type='text'
+          onChange={handleChange}
+          placeholder='Search'
+        />
+      </form>
     </div>
+    {filteredCoins.map(coin => {
+      return (
+        <Coin
+          key={coin.id}
+          name={coin.name}
+          price={coin.current_price}
+          symbol={coin.symbol}
+          marketcap={coin.total_volume}
+          volume={coin.market_cap}
+          image={coin.image}
+          priceChange={coin.price_change_percentage_24h}
+        />
+      );
+    })}
+  </div>
   );
 }
 
